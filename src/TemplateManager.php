@@ -47,7 +47,7 @@ class TemplateManager
      * @param array $data
      * @return Template
      */
-    public function getTemplateComputed(Template $tpl, array $data)
+    public function getTemplateComputed(Template $tpl, array $data): Template
     {
         if (!$tpl) {
             throw new \RuntimeException('no tpl given');
@@ -64,7 +64,7 @@ class TemplateManager
      * @param $text
      * @return mixed
      */
-    private function computeSummary($text)
+    private function computeSummary($text): string
     {
         $containsSummaryHtml = strpos($text, '[quote:summary_html]');
         $containsSummary = strpos($text, '[quote:summary]');
@@ -92,7 +92,7 @@ class TemplateManager
      * @param $text
      * @return mixed
      */
-    private function computeDestination($text)
+    private function computeDestination($text): string
     {
         if (strpos($text, '[quote:destination_name]') !== false) {
             $text = str_replace('[quote:destination_name]', $this->destinationRepository->countryName, $text);
@@ -118,7 +118,7 @@ class TemplateManager
      * @param $user
      * @return mixed
      */
-    private function computeUser($text, $user)
+    private function computeUser($text, $user): string
     {
         if ($user) {
             if (strpos($text, '[user:first_name]') !== false) {
@@ -139,7 +139,7 @@ class TemplateManager
      * @param array $data
      * @return mixed
      */
-    private function computeText($text, array $data)
+    private function computeText($text, array $data): string
     {
         $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
         if (array_key_exists('user', $data) && $data['user'] instanceof User) {
