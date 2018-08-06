@@ -11,8 +11,6 @@ use Template\Repository\DestinationRepository;
 
 class TemplateManager
 {
-
-
     private $applicationContext;
     private $oQuote;
     private $oSite;
@@ -44,6 +42,11 @@ class TemplateManager
         $this->destinationRepository = $this->oDestination->getById($quote->destinationId);
     }
 
+    /**
+     * @param Template $tpl
+     * @param array $data
+     * @return Template
+     */
     public function getTemplateComputed(Template $tpl, array $data)
     {
         if (!$tpl) {
@@ -57,12 +60,14 @@ class TemplateManager
         return $replaced;
     }
 
-
-
+    /**
+     * @param $text
+     * @return mixed
+     */
     private function computeSummary($text)
     {
         $containsSummaryHtml = strpos($text, '[quote:summary_html]');
-        $containsSummary     = strpos($text, '[quote:summary]');
+        $containsSummary = strpos($text, '[quote:summary]');
 
         if ($containsSummaryHtml !== false || $containsSummary !== false) {
             if ($containsSummaryHtml !== false) {
@@ -80,36 +85,54 @@ class TemplateManager
                 );
             }
         }
-
-
         return $text;
     }
 
+    /**
+     * @param $text
+     * @return mixed
+     */
     private function computeDestination($text)
     {
-        if(strpos($text, '[quote:destination_name]') !== false){
-            $text = str_replace('[quote:destination_name]',$this->destinationRepository->countryName,$text);
+        if (strpos($text, '[quote:destination_name]') !== false) {
+            $text = str_replace('[quote:destination_name]', $this->destinationRepository->countryName, $text);
         }
 
-        if (!empty($this->destinationRepository)){
-            $text = str_replace('[quote:destination_link]', $this->siteRepository->url . '/' . $this->destinationRepository->countryName . '/quote/' . $this->quoteRepository->id, $text);
-        }else{
+        if (!empty($this->destinationRepository)) {
+            $url = $this->siteRepository->url . '/' . $this->destinationRepository->countryName . '/quote/' .
+                $this->quoteRepository->id;
+            $text = str_replace(
+                '[quote:destination_link]',
+                $url,
+                $text
+            );
+        } else {
             $text = str_replace('[quote:destination_link]', '', $text);
         }
 
         return $text;
     }
 
+    /**
+     * @param $text
+     * @param $user
+     * @return mixed
+     */
     private function computeUser($text, $user)
     {
-        if($user) {
-            if(strpos($text, '[user:first_name]') !== false){
+        if ($user) {
+            if (strpos($text, '[user:first_name]') !== false) {
                 $text = str_replace('[user:first_name]', ucfirst(mb_strtolower($user->firstname)), $text);
             }
         }
         return $text;
     }
 
+    /**
+     * @param $text
+     * @param array $data
+     * @return mixed
+     */
     private function computeText($text, array $data)
     {
         $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
@@ -119,20 +142,15 @@ class TemplateManager
             $user = $this->applicationContext->getCurrentUser();
         }
 
-        if ($quote)
-        {
+        //quote
+        if ($quote) {
             $this->initQuote($quote);
             $text = $this->computeSummary($text);
         }
-
+        //destination
         $text = $this->computeDestination($text);
-
-        /*
-         * USER
-         * [user:*]
-         */
+        //user
         $text = $this->computeUser($text, $user);
-
 
         return $text;
     }
