@@ -87,12 +87,15 @@ class TemplateManager
 
     private function computeDestination($text)
     {
-        (strpos($text, '[quote:destination_name]') !== false) and $text = str_replace('[quote:destination_name]',$this->destinationRepository->countryName,$text);
+        if(strpos($text, '[quote:destination_name]') !== false){
+            $text = str_replace('[quote:destination_name]',$this->destinationRepository->countryName,$text);
+        }
 
-        if (!empty($this->destinationRepository))
+        if (!empty($this->destinationRepository)){
             $text = str_replace('[quote:destination_link]', $this->siteRepository->url . '/' . $this->destinationRepository->countryName . '/quote/' . $this->quoteRepository->id, $text);
-        else
+        }else{
             $text = str_replace('[quote:destination_link]', '', $text);
+        }
 
         return $text;
     }
@@ -100,7 +103,9 @@ class TemplateManager
     private function computeUser($text, $user)
     {
         if($user) {
-            (strpos($text, '[user:first_name]') !== false) and $text = str_replace('[user:first_name]', ucfirst(mb_strtolower($user->firstname)), $text);
+            if(strpos($text, '[user:first_name]') !== false){
+                $text = str_replace('[user:first_name]', ucfirst(mb_strtolower($user->firstname)), $text);
+            }
         }
         return $text;
     }
@@ -108,7 +113,11 @@ class TemplateManager
     private function computeText($text, array $data)
     {
         $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
-        $user  = (isset($data['user'])  and ($data['user']  instanceof User))  ? $data['user']  : $this->applicationContext->getCurrentUser();
+        if (array_key_exists('user', $data) && $data['user'] instanceof User) {
+            $user = $data['user'];
+        } else {
+            $user = $this->applicationContext->getCurrentUser();
+        }
 
         if ($quote)
         {
