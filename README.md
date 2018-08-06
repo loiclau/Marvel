@@ -39,4 +39,11 @@ What do we expect from you:
  - several commits, with an explicit message each time
  - a file / message / email explaining your process and principles you've followed
 
+## Process
+ - refactor core to use namespace
+ - add test coverage
+ - split global function in object function
+ - clean condition
+ - clean style
+
 **Good luck!**
