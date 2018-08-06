@@ -4,6 +4,7 @@ use Template\TemplateManager;
 use Template\Entity\Quote;
 use Template\Entity\Template;
 use Template\Repository\DestinationRepository;
+use Template\Repository\SummaryRepository;
 use Template\Repository\SiteRepository;
 use Template\Context\ApplicationContext;
 
@@ -26,7 +27,7 @@ class TemplateManagerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function test()
+    public function testTemplateComputed()
     {
         $faker = \Faker\Factory::create();
 
@@ -44,7 +45,10 @@ class TemplateManagerTest extends PHPUnit_Framework_TestCase
             1,
             'Votre voyage avec une agence locale [quote:destination_name]',
             "
-Bonjour [user:first_name],
+Bonjour [user:first_name] [user:last_name] [user:email],
+
+[quote:summary_html]
+[quote:summary]
 
 Merci d'avoir contacté un agent local pour votre voyage [quote:destination_name].
 
@@ -66,7 +70,10 @@ www.evaneos.com
 
         $this->assertEquals('Votre voyage avec une agence locale ' . $expectedDestination->countryName, $message->subject);
         $this->assertEquals("
-Bonjour " . $expectedUser->firstname . ",
+Bonjour " . $expectedUser->firstname . " " . $expectedUser->lastname . " " . $expectedUser->email . ",
+
+<p>" . $quote->id . "</p>
+" . $quote->id . "
 
 Merci d'avoir contacté un agent local pour votre voyage " . $expectedDestination->countryName . ".
 
