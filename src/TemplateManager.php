@@ -59,50 +59,71 @@ class TemplateManager
 
 
 
-    private function computeText($text, array $data)
+    private function computeSummary($text)
     {
-        $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
+        $containsSummaryHtml = strpos($text, '[quote:summary_html]');
+        $containsSummary     = strpos($text, '[quote:summary]');
 
-        if ($quote)
-        {
-            $this->initQuote($quote);
-
-            $containsSummaryHtml = strpos($text, '[quote:summary_html]');
-            $containsSummary     = strpos($text, '[quote:summary]');
-
-            if ($containsSummaryHtml !== false || $containsSummary !== false) {
-                if ($containsSummaryHtml !== false) {
-                    $text = str_replace(
-                        '[quote:summary_html]',
-                        Quote::renderHtml($this->quoteRepository),
-                        $text
-                    );
-                }
-                if ($containsSummary !== false) {
-                    $text = str_replace(
-                        '[quote:summary]',
-                        Quote::renderText($this->quoteRepository),
-                        $text
-                    );
-                }
+        if ($containsSummaryHtml !== false || $containsSummary !== false) {
+            if ($containsSummaryHtml !== false) {
+                $text = str_replace(
+                    '[quote:summary_html]',
+                    Quote::renderHtml($this->quoteRepository),
+                    $text
+                );
             }
-
-            (strpos($text, '[quote:destination_name]') !== false) and $text = str_replace('[quote:destination_name]',$this->destinationRepository->countryName,$text);
+            if ($containsSummary !== false) {
+                $text = str_replace(
+                    '[quote:summary]',
+                    Quote::renderText($this->quoteRepository),
+                    $text
+                );
+            }
         }
+
+
+        return $text;
+    }
+
+    private function computeDestination($text)
+    {
+        (strpos($text, '[quote:destination_name]') !== false) and $text = str_replace('[quote:destination_name]',$this->destinationRepository->countryName,$text);
 
         if (!empty($this->destinationRepository))
             $text = str_replace('[quote:destination_link]', $this->siteRepository->url . '/' . $this->destinationRepository->countryName . '/quote/' . $this->quoteRepository->id, $text);
         else
             $text = str_replace('[quote:destination_link]', '', $text);
 
+        return $text;
+    }
+
+    private function computeUser($text, $user)
+    {
+        if($user) {
+            (strpos($text, '[user:first_name]') !== false) and $text = str_replace('[user:first_name]', ucfirst(mb_strtolower($user->firstname)), $text);
+        }
+        return $text;
+    }
+
+    private function computeText($text, array $data)
+    {
+        $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
+        $user  = (isset($data['user'])  and ($data['user']  instanceof User))  ? $data['user']  : $this->applicationContext->getCurrentUser();
+
+        if ($quote)
+        {
+            $this->initQuote($quote);
+            $text = $this->computeSummary($text);
+        }
+
+        $text = $this->computeDestination($text);
+
         /*
          * USER
          * [user:*]
          */
-        $_user  = (isset($data['user'])  and ($data['user']  instanceof User))  ? $data['user']  : $this->applicationContext->getCurrentUser();
-        if($_user) {
-            (strpos($text, '[user:first_name]') !== false) and $text = str_replace('[user:first_name]'       , ucfirst(mb_strtolower($_user->firstname)), $text);
-        }
+        $text = $this->computeUser($text, $user);
+
 
         return $text;
     }
