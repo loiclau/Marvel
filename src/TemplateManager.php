@@ -1,5 +1,7 @@
 <?php
+
 namespace Template;
+
 use Template\Entity\Quote;
 use Template\Entity\Template;
 use Template\Context\ApplicationContext;
@@ -9,11 +11,37 @@ use Template\Repository\DestinationRepository;
 
 class TemplateManager
 {
-    private $applicationContext;
 
+
+    private $applicationContext;
+    private $oQuote;
+    private $oSite;
+    private $oDestination;
+
+    private $quoteRepository;
+    private $destinationRepository;
+    private $siteRepository;
+
+    /**
+     * TemplateManager constructor.
+     */
     public function __construct()
     {
         $this->applicationContext = ApplicationContext::getInstance();
+    }
+
+    /**
+     * @param Quote $quote
+     */
+    public function initQuote(Quote $quote)
+    {
+        $this->oQuote = QuoteRepository::getInstance();
+        $this->oSite = SiteRepository::getInstance();
+        $this->oDestination = DestinationRepository::getInstance();
+
+        $this->quoteRepository = $this->oQuote->getById($quote->id);
+        $this->siteRepository = $this->oSite->getById($quote->siteId);
+        $this->destinationRepository = $this->oDestination->getById($quote->destinationId);
     }
 
     public function getTemplateComputed(Template $tpl, array $data)
@@ -29,17 +57,15 @@ class TemplateManager
         return $replaced;
     }
 
+
+
     private function computeText($text, array $data)
     {
-        $APPLICATION_CONTEXT = ApplicationContext::getInstance();
-
         $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
 
         if ($quote)
         {
-            $_quoteFromRepository = QuoteRepository::getInstance()->getById($quote->id);
-            $usefulObject = SiteRepository::getInstance()->getById($quote->siteId);
-            $destinationOfQuote = DestinationRepository::getInstance()->getById($quote->destinationId);
+            $this->initQuote($quote);
 
             if(strpos($text, '[quote:destination_link]') !== false){
                 $destination = DestinationRepository::getInstance()->getById($quote->destinationId);
@@ -52,24 +78,24 @@ class TemplateManager
                 if ($containsSummaryHtml !== false) {
                     $text = str_replace(
                         '[quote:summary_html]',
-                        Quote::renderHtml($_quoteFromRepository),
+                        Quote::renderHtml($this->quoteRepository),
                         $text
                     );
                 }
                 if ($containsSummary !== false) {
                     $text = str_replace(
                         '[quote:summary]',
-                        Quote::renderText($_quoteFromRepository),
+                        Quote::renderText($this->quoteRepository),
                         $text
                     );
                 }
             }
 
-            (strpos($text, '[quote:destination_name]') !== false) and $text = str_replace('[quote:destination_name]',$destinationOfQuote->countryName,$text);
+            (strpos($text, '[quote:destination_name]') !== false) and $text = str_replace('[quote:destination_name]',$this->destinationRepository->countryName,$text);
         }
 
         if (isset($destination))
-            $text = str_replace('[quote:destination_link]', $usefulObject->url . '/' . $destination->countryName . '/quote/' . $_quoteFromRepository->id, $text);
+            $text = str_replace('[quote:destination_link]', $this->siteRepository->url . '/' . $destination->countryName . '/quote/' . $this->quoteRepository->id, $text);
         else
             $text = str_replace('[quote:destination_link]', '', $text);
 
