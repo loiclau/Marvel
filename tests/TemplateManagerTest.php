@@ -1,8 +1,10 @@
 <?php
+
 use Template\TemplateManager;
 use Template\Entity\Quote;
 use Template\Entity\Template;
 use Template\Repository\DestinationRepository;
+use Template\Repository\SiteRepository;
 use Template\Context\ApplicationContext;
 
 class TemplateManagerTest extends PHPUnit_Framework_TestCase
@@ -28,10 +30,15 @@ class TemplateManagerTest extends PHPUnit_Framework_TestCase
     {
         $faker = \Faker\Factory::create();
 
-        $expectedDestination = DestinationRepository::getInstance()->getById($faker->randomNumber());
+        $destinationId = $faker->randomNumber();
+        $expectedDestination = DestinationRepository::getInstance()->getById($destinationId);
+
         $expectedUser = ApplicationContext::getInstance()->getCurrentUser();
 
-        $quote = new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), $faker->date());
+        $siteId = $faker->randomNumber();
+        $expectedSite = SiteRepository::getInstance()->getById($siteId);
+
+        $quote = new Quote($faker->randomNumber(), $siteId, $destinationId, $faker->date());
 
         $template = new Template(
             1,
@@ -42,6 +49,8 @@ Bonjour [user:first_name],
 Merci d'avoir contacté un agent local pour votre voyage [quote:destination_name].
 
 Bien cordialement,
+
+[quote:destination_link]
 
 L'équipe Evaneos.com
 www.evaneos.com
@@ -62,6 +71,8 @@ Bonjour " . $expectedUser->firstname . ",
 Merci d'avoir contacté un agent local pour votre voyage " . $expectedDestination->countryName . ".
 
 Bien cordialement,
+
+".$expectedSite->url.'/'.$expectedDestination->countryName.'/quote/'.$quote->id."
 
 L'équipe Evaneos.com
 www.evaneos.com
