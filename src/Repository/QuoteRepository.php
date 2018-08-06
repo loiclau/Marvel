@@ -1,8 +1,12 @@
 <?php
+namespace Template\Repository;
+use Faker;
+use \DateTime;
+use Template\Entity\Quote;
 
 class QuoteRepository implements Repository
 {
-    use SingletonTrait;
+    use \Template\Helper\SingletonTrait;
 
     private $siteId;
     private $destinationId;

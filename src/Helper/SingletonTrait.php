@@ -1,4 +1,5 @@
 <?php
+namespace Template\Helper;
 
 trait SingletonTrait
 {
