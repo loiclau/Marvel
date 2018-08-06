@@ -67,10 +67,6 @@ class TemplateManager
         {
             $this->initQuote($quote);
 
-            if(strpos($text, '[quote:destination_link]') !== false){
-                $destination = DestinationRepository::getInstance()->getById($quote->destinationId);
-            }
-
             $containsSummaryHtml = strpos($text, '[quote:summary_html]');
             $containsSummary     = strpos($text, '[quote:summary]');
 
@@ -94,8 +90,8 @@ class TemplateManager
             (strpos($text, '[quote:destination_name]') !== false) and $text = str_replace('[quote:destination_name]',$this->destinationRepository->countryName,$text);
         }
 
-        if (isset($destination))
-            $text = str_replace('[quote:destination_link]', $this->siteRepository->url . '/' . $destination->countryName . '/quote/' . $this->quoteRepository->id, $text);
+        if (!empty($this->destinationRepository))
+            $text = str_replace('[quote:destination_link]', $this->siteRepository->url . '/' . $this->destinationRepository->countryName . '/quote/' . $this->quoteRepository->id, $text);
         else
             $text = str_replace('[quote:destination_link]', '', $text);
 
