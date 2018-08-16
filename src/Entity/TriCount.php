@@ -8,11 +8,18 @@ class TriCount
     const MIN_NUMBER = 0;
     const MAX_NUMBER = 1000001;
 
-
+    /**
+     * TriCount constructor.
+     */
     public function __construct()
     {
     }
 
+    /**
+     * @param int $minLength
+     * @param int $maxLength
+     * @return int
+     */
     public function count(int $minLength, int $maxLength): int
     {
         $total = 0;
@@ -31,6 +38,11 @@ class TriCount
        return $total;
     }
 
+    /**
+     * @param int $minLength
+     * @param int $maxLength
+     * @return bool
+     */
     public function validEntry(int $minLength, int $maxLength): bool
     {
         if ((TriCount::MIN_NUMBER < $minLength) && ($minLength < $maxLength) && ($maxLength < TriCount::MAX_NUMBER)) {
