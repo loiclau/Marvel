@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteRule ^/api/.*$ /Raiponce/api/index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ /Raiponce/api/index.php [QSA,L]
+
+
