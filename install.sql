@@ -10,7 +10,6 @@ CREATE DATABASE playlist;
 CREATE TABLE IF NOT EXISTS `playlist` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(256) NOT NULL,
-  `order` int(5) NOT NULL,
   `created` datetime NOT NULL,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -32,10 +31,10 @@ CREATE TABLE IF NOT EXISTS `playlist_to_video` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #exemple
-INSERT INTO `playlist` (`id`, `name`, `order`, `created`, `modified`) VALUES
-(1, 'Disney', 1, '2018-08-01 00:00:00', '2018-08-01 00:00:00'),
-(2, 'Pixar', 2, '2018-08-01 00:00:00', '2018-08-01 00:00:00'),
-(3, 'Ghibli', 3, '2018-08-01 00:00:00', '2018-08-01 00:00:00');
+INSERT INTO `playlist` (`id`, `name`, `created`, `modified`) VALUES
+(1, 'Disney', '2018-08-01 00:00:00', '2018-08-01 00:00:00'),
+(2, 'Pixar', '2018-08-01 00:00:00', '2018-08-01 00:00:00'),
+(3, 'Ghibli', '2018-08-01 00:00:00', '2018-08-01 00:00:00');
 
 INSERT INTO `video` (`id`, `title`, `thumbnail`, `created`, `modified`) VALUES
 (1, 'Raiponse', 'raiponse.com', '2010-12-01 00:00:00', '2018-08-01 00:00:00'),

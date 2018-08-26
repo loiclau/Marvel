@@ -35,7 +35,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"Porco Rosso\",\n  \"thumbnail\": \"porcorosso.com\"\n}"
+							"raw": "{\n  \"title\": \"Batman\",\n  \"thumbnail\": \"batman.com\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/videos",
@@ -63,6 +63,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -76,7 +79,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"action\": \"setparam\",\n  \"object\": \"instance\",\n  \"values\": \"test_instance;name;{{instance_name}}\"\n}"
+							"raw": "{\n  \"name\": \"DC\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/playlists",
@@ -131,15 +134,11 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "centreon-auth-token",
-								"value": "{{token}}"
 							}
 						],
 						"body": {
@@ -188,15 +187,11 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "centreon-auth-token",
-								"value": "{{token}}"
 							}
 						],
 						"body": {
@@ -229,7 +224,7 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -271,7 +266,7 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -340,7 +335,10 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -353,7 +351,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"action\": \"add\",\n  \"object\": \"resourcecfg\",\n  \"values\": \"test_resourcecfg;test_value;{{instance_name}};test_comment\"\n}"
+							"raw": "{\n  \"name\": \"marvel\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/playlists/1",
@@ -398,7 +396,10 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -411,7 +412,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"action\": \"show\",\n  \"object\": \"resourcecfg\"\n}"
+							"raw": "{\n  \"title\": \"xmen\",\n  \"thumbnail\": \"xmen.com\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/videos/1",
@@ -467,7 +468,10 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -480,7 +484,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"action\": \"add\",\n  \"object\": \"resourcecfg\",\n  \"values\": \"test_resourcecfg;test_value;{{instance_name}};test_comment\"\n}"
+							"raw": "{\n}"
 						},
 						"url": {
 							"raw": "{{url}}/playlists/1",
@@ -525,7 +529,10 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -538,7 +545,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"action\": \"show\",\n  \"object\": \"resourcecfg\"\n}"
+							"raw": "{\n}"
 						},
 						"url": {
 							"raw": "{{url}}/videos/1",

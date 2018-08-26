@@ -59,10 +59,33 @@ class Videos extends Webservice
 
     public function update(array $data)
     {
-        $sql = "UPDATE " . $this->table . " SET";
+        $queryData = '';
+        $queryValues = array();
+        $id = $data['id'];
+        unset($data['id']);
+
+        foreach ($data AS $key => $value) {
+            $queryData .= '`' . $key . '` = :' . $key . ', ';
+            $queryValues[$key] = $value;
+        }
+        $queryData = rtrim($queryData, ', ');
+
+        $sql = "UPDATE " . $this->table . " SET " . $queryData . " WHERE id = :id";
         $stmt = $this->db->prepare($sql);
-        $status = $stmt->execute(array());
-        return $status;
+
+        foreach ($queryValues AS $key => $value) {
+            $stmt->bindParam(":" . $key, $value);
+        }
+        $stmt->bindParam(":id", $id);
+        $status = $stmt->execute();
+
+        $sql = "SELECT * FROM " . $this->table . " WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $data = $stmt->fetch(\PDO::FETCH_OBJ);
+
+        return array('status' => $status, 'data' => $data);
     }
 
     public function delete($id)

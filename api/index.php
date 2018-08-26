@@ -106,7 +106,7 @@ switch ($method) {
             $data = $object->get($id);
             if (empty($data)) {
                 $response['status'] = 404;
-                $response['data'] = array('error' => 'error');
+                $response['data'] = array('error' => 'An error has occurred');
             } else {
                 $response['status'] = 200;
                 $response['data'] = $data;
@@ -135,29 +135,31 @@ switch ($method) {
         break;
     case 'PUT':
         // METHOD : PUT api/$object/:id
-        if (isset($url_array[1])) {
-            $id = $url_array[1];
+        if (isset($urlArray[1])) {
+            $id = $urlArray[1];
             // check if id exist in database
             $data = $object->get($id);
             if (empty($data)) {
                 $response['status'] = 404;
-                $response['data'] = array('error' => '');
+                $response['data'] = array('error' => 'Object not found');
             } else {
                 // get post from client
                 $json = file_get_contents('php://input');
-                $post = json_decode($json); // decode to object
+                $post = json_decode($json, true); // decode to array
+
                 // check input completeness
-                if ($post == "") {
+                if (empty($post)) {
                     $response['status'] = 400;
-                    $response['data'] = array('error' => '');
+                    $response['data'] = array('error' => 'no data send');
                 } else {
+                    $post['id'] = $id;
                     $status = $object->update($post);
-                    if ($status == 1) {
+                    if ($status['status'] == 1) {
                         $response['status'] = 200;
-                        $response['data'] = array('success' => '');
+                        $response['data'] = $status['data'];
                     } else {
                         $response['status'] = 400;
-                        $response['data'] = array('error' => '');
+                        $response['data'] = array('error' => 'An error has occurred');
                     }
                 }
             }
@@ -165,21 +167,21 @@ switch ($method) {
         break;
     case 'DELETE':
         // METHOD : DELETE api/$object/:id
-        if (isset($url_array[1])) {
-            $id = $url_array[1];
+        if (isset($urlArray[1])) {
+            $id = $urlArray[1];
             // check if id exist in database
             $data = $object->get($id);
             if (empty($data)) {
                 $response['status'] = 404;
-                $response['data'] = array('error' => '');
+                $response['data'] = array('error' => 'Object not found');
             } else {
                 $status = $object->delete($id);
                 if ($status == 1) {
                     $response['status'] = 200;
-                    $response['data'] = array('success' => '');
+                    $response['data'] = array('success' => 'delete successfully');
                 } else {
                     $response['status'] = 400;
-                    $response['data'] = array('error' => '');
+                    $response['data'] = array('error' => 'An error has occurred');
                 }
             }
         }
