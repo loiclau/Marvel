@@ -1,0 +1,581 @@
+{
+	"info": {
+		"_postman_id": "5f78bdf8-0c8f-4c94-ba0e-14a64d0c51e9",
+		"name": "Rest API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "00-Add",
+			"item": [
+				{
+					"name": "Add Video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f89e6e9e-3625-4f51-9a54-db8e6e9e880b",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Porco Rosso\",\n  \"thumbnail\": \"porcorosso.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/videos",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"videos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Playlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"setparam\",\n  \"object\": \"instance\",\n  \"values\": \"test_instance;name;{{instance_name}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/playlists",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"playlists"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "f5705ca5-2781-4614-93a4-356892e6fa35",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e34e73e8-ca24-422b-942c-609ed3103ae8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "01-Get",
+			"item": [
+				{
+					"name": "Search Playlists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"add\",\n  \"object\": \"resourcecfg\",\n  \"values\": \"test_resourcecfg;test_value;{{instance_name}};test_comment\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/playlists",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"playlists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Videos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"var resourceData = jsonData.result;",
+									"",
+									"try {",
+									"    var i = 0;",
+									"    while (i < resourceData.length) {",
+									"        if (\"$test_resourcecfg$\" == resourceData[i].name) {",
+									"            postman.setEnvironmentVariable(\"resourcecfg_id\",resourceData[i].id);",
+									"            break;",
+									"        }",
+									"        i++;",
+									"    }",
+									"    if (i == resourceData.length)",
+									"        tests[\"the resourcecfg was found\"] = false;",
+									"} catch (e) {}",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"show\",\n  \"object\": \"resourcecfg\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/videos",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"videos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"setparam\",\n  \"object\": \"resourcecfg\",\n  \"values\": \"{{resourcecfg_id}};name;{{rcfg_name}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/videos/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"videos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Playlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"setparam\",\n  \"object\": \"resourcecfg\",\n  \"values\": \"{{resourcecfg_id}};value;{{rcfg_value}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/playlists/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"playlists",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ccab39b9-5474-401f-ba9f-a3f1e42fa85d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f2ba698-95a8-409c-97b7-8da267443aa7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "02-Put",
+			"item": [
+				{
+					"name": "Update Playlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"add\",\n  \"object\": \"resourcecfg\",\n  \"values\": \"test_resourcecfg;test_value;{{instance_name}};test_comment\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/playlists/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"playlists",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"var resourceData = jsonData.result;",
+									"",
+									"try {",
+									"    var i = 0;",
+									"    while (i < resourceData.length) {",
+									"        if (\"$test_resourcecfg$\" == resourceData[i].name) {",
+									"            postman.setEnvironmentVariable(\"resourcecfg_id\",resourceData[i].id);",
+									"            break;",
+									"        }",
+									"        i++;",
+									"    }",
+									"    if (i == resourceData.length)",
+									"        tests[\"the resourcecfg was found\"] = false;",
+									"} catch (e) {}",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"show\",\n  \"object\": \"resourcecfg\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/videos/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"videos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ccab39b9-5474-401f-ba9f-a3f1e42fa85d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f2ba698-95a8-409c-97b7-8da267443aa7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "03-Delete",
+			"item": [
+				{
+					"name": "Delete Playlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"add\",\n  \"object\": \"resourcecfg\",\n  \"values\": \"test_resourcecfg;test_value;{{instance_name}};test_comment\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/playlists/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"playlists",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"var resourceData = jsonData.result;",
+									"",
+									"try {",
+									"    var i = 0;",
+									"    while (i < resourceData.length) {",
+									"        if (\"$test_resourcecfg$\" == resourceData[i].name) {",
+									"            postman.setEnvironmentVariable(\"resourcecfg_id\",resourceData[i].id);",
+									"            break;",
+									"        }",
+									"        i++;",
+									"    }",
+									"    if (i == resourceData.length)",
+									"        tests[\"the resourcecfg was found\"] = false;",
+									"} catch (e) {}",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"show\",\n  \"object\": \"resourcecfg\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/videos/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"videos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ccab39b9-5474-401f-ba9f-a3f1e42fa85d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f2ba698-95a8-409c-97b7-8da267443aa7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}

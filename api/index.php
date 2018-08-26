@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use API\Entity\Video;
-use API\Entity\Playlist;
+use API\Entity\Videos;
+use API\Entity\Playlists;
 use API\Config\Database;
 
 function deliver_response($response)
@@ -95,7 +95,7 @@ if (class_exists($oPath)) {
 
 switch ($method) {
     case 'GET':
-        if (!isset($url_array[1])) {
+        if (!isset($urlArray[1])) {
             // METHOD : GET api/$object
             $data = $object->getAll();
             $response['status'] = 200;
@@ -117,19 +117,19 @@ switch ($method) {
         // METHOD : POST api/$object
         // get post from client
         $json = file_get_contents('php://input');
-        $post = json_decode($json); // decode to object
+        $post = json_decode($json, true); // decode to array
         // check input completeness
-        if ($post == "") {
+        if (empty($post)) {
             $response['status'] = 400;
-            $response['data'] = array('error' => 'Data tidak lengkap');
+            $response['data'] = array('error' => 'no data send');
         } else {
             $status = $object->insert($post);
-            if ($status == 1) {
+            if ($status['status'] == 1) {
                 $response['status'] = 201;
-                $response['data'] = array('success' => 'Data berhasil disimpan');
+                $response['data'] = $status['data'];
             } else {
                 $response['status'] = 400;
-                $response['data'] = array('error' => 'Terjadi kesalahan');
+                $response['data'] = array('error' => 'An error has occurred');
             }
         }
         break;
@@ -138,7 +138,7 @@ switch ($method) {
         if (isset($url_array[1])) {
             $id = $url_array[1];
             // check if id exist in database
-            $data = $object->ge($id);
+            $data = $object->get($id);
             if (empty($data)) {
                 $response['status'] = 404;
                 $response['data'] = array('error' => '');

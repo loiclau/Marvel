@@ -2,7 +2,7 @@
 
 namespace API\Entity;
 
-class Playlist
+class Playlists extends Webservice
 {
 
     // database connection and table name
@@ -45,7 +45,6 @@ class Playlist
         $status = $stmt->execute($data);
         return $status;
     }
-
 
     public function update(array $data)
     {
