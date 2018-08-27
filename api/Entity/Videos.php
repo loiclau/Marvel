@@ -14,41 +14,60 @@ class Videos extends Webservice
     public $thumbnail;
     public $created;
 
+    /**
+     * Videos constructor.
+     * @param $db
+     */
     public function __construct($db)
     {
         $this->table = 'video';
         $this->db = $db;
     }
 
+    /**
+     * @return array
+     */
     public function getAll()
     {
         $sql = "SELECT * FROM " . $this->table . " ORDER BY title ASC";
         $stmt = $this->db->query($sql);
         $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
-        return $data;
+        return array('data' => $data);
     }
 
+    /**
+     * @param $id
+     * @return array
+     */
     public function get($id)
     {
-        $sql = "SELECT * FROM " . $this->table . " WHERE id = ?";
+        $sql = "SELECT * FROM " . $this->table . " WHERE id = :id";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(array($id));
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_OBJ);
-        return $data;
+        return array('data' => $data);
     }
 
-
+    /**
+     * @param $id
+     * @return array
+     */
     public function getPlaylistsFromVideos($id)
     {
-        $sql = "SELECT p.* FROM " . $this->table . " p , video v , playlist_to_video pv WHERE " .
-            "p.id = pv.playlist_id AND pc.video_id = v.id AND v.id = ?";
+        $sql = "SELECT p.* FROM " . $this->table . " v , playlist p , playlist_to_video pv WHERE " .
+            "p.id = pv.playlist_id AND pv.video_id = v.id AND v.id = :id";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(array($id));
-        $data = $stmt->fetch(\PDO::FETCH_OBJ);
-        return $data;
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
+        return array('data' => $data);
     }
 
-
+    /**
+     * @param array $data
+     * @return array
+     */
     public function insert(array $data)
     {
         $sql = "INSERT INTO " . $this->table . " SET title = :title, thumbnail=:thumbnail, created=:created";
@@ -57,17 +76,20 @@ class Videos extends Webservice
         $stmt->bindParam(":title", $data['title']);
         $stmt->bindParam(":thumbnail", $data['thumbnail']);
         $stmt->bindParam(":created", date('Y-m-d H:i:s'));
-        $status = $stmt->execute();
+        $stmt->execute();
 
         $sql = "SELECT * FROM " . $this->table . " WHERE title = :title";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(":title", $data['title']);
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_OBJ);
-
-        return array('status' => $status, 'data' => $data);
+        return array('data' => $data);
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function update(array $data)
     {
         $queryData = '';
@@ -88,22 +110,22 @@ class Videos extends Webservice
             $stmt->bindParam(":" . $key, $value);
         }
         $stmt->bindParam(":id", $id);
-        $status = $stmt->execute();
-
-        $sql = "SELECT * FROM " . $this->table . " WHERE `id` = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(":id", $id);
         $stmt->execute();
-        $data = $stmt->fetch(\PDO::FETCH_OBJ);
 
-        return array('status' => $status, 'data' => $data);
+        $data = $this->get($id);
+        return $data;
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function delete($id)
     {
-        $sql = "DELETE FROM " . $this->table . " WHERE id=?";
+        $sql = "DELETE FROM " . $this->table . " WHERE id= :id";
         $stmt = $this->db->prepare($sql);
-        $status = $stmt->execute(array($id));
+        $stmt->bindParam(":id", $id);
+        $status = $stmt->execute();
         return $status;
     }
 }

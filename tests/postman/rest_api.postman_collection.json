@@ -14,10 +14,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f89e6e9e-3625-4f51-9a54-db8e6e9e880b",
+								"id": "b33fff82-c88c-4ef1-a4f3-acbfde064347",
 								"type": "text/javascript",
 								"exec": [
-									""
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
 						}
@@ -163,24 +163,9 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "03e7e25a-8648-46d4-b5ba-9abf2be27ce1",
 								"type": "text/javascript",
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"var resourceData = jsonData.result;",
-									"",
-									"try {",
-									"    var i = 0;",
-									"    while (i < resourceData.length) {",
-									"        if (\"$test_resourcecfg$\" == resourceData[i].name) {",
-									"            postman.setEnvironmentVariable(\"resourcecfg_id\",resourceData[i].id);",
-									"            break;",
-									"        }",
-									"        i++;",
-									"    }",
-									"    if (i == resourceData.length)",
-									"        tests[\"the resourcecfg was found\"] = false;",
-									"} catch (e) {}",
-									"",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
@@ -293,6 +278,92 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Search Video from Playlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"setparam\",\n  \"object\": \"resourcecfg\",\n  \"values\": \"{{resourcecfg_id}};value;{{rcfg_value}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/playlists/2/videos",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"playlists",
+								"2",
+								"videos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Playlist from Video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"action\": \"setparam\",\n  \"object\": \"resourcecfg\",\n  \"values\": \"{{resourcecfg_id}};value;{{rcfg_value}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/videos/1/playlists",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"videos",
+								"1",
+								"playlists"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"event": [
@@ -372,24 +443,9 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "91df7f55-4aca-4096-bcd3-de9a62bdff40",
 								"type": "text/javascript",
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"var resourceData = jsonData.result;",
-									"",
-									"try {",
-									"    var i = 0;",
-									"    while (i < resourceData.length) {",
-									"        if (\"$test_resourcecfg$\" == resourceData[i].name) {",
-									"            postman.setEnvironmentVariable(\"resourcecfg_id\",resourceData[i].id);",
-									"            break;",
-									"        }",
-									"        i++;",
-									"    }",
-									"    if (i == resourceData.length)",
-									"        tests[\"the resourcecfg was found\"] = false;",
-									"} catch (e) {}",
-									"",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
@@ -420,6 +476,54 @@
 								"{{url}}"
 							],
 							"path": [
+								"videos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Video to playlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a00a0a59-2675-4f5a-b1e8-b91a13a44e24",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order\": \"3\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/playlists/3/videos/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"playlists",
+								"3",
 								"videos",
 								"1"
 							]
@@ -505,24 +609,9 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "2028630e-01a6-4ad8-9ed2-a6b35bb8148d",
 								"type": "text/javascript",
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"var resourceData = jsonData.result;",
-									"",
-									"try {",
-									"    var i = 0;",
-									"    while (i < resourceData.length) {",
-									"        if (\"$test_resourcecfg$\" == resourceData[i].name) {",
-									"            postman.setEnvironmentVariable(\"resourcecfg_id\",resourceData[i].id);",
-									"            break;",
-									"        }",
-									"        i++;",
-									"    }",
-									"    if (i == resourceData.length)",
-									"        tests[\"the resourcecfg was found\"] = false;",
-									"} catch (e) {}",
-									"",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								]
 							}
@@ -553,6 +642,54 @@
 								"{{url}}"
 							],
 							"path": [
+								"videos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Video from playlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a00a0a59-2675-4f5a-b1e8-b91a13a44e24",
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "centreon-auth-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order\": \"3\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/playlists/3/videos/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"playlists",
+								"3",
 								"videos",
 								"1"
 							]
