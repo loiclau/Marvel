@@ -136,12 +136,12 @@ Important notes :
 
 /playlists/                    Add a playlist    
 /videos/                       Add a video   
-/playlists/id/videos/id        Add a video to a playlist 
 
 ### PUT
 
 /playlists/id                  Update a playlist    
-/videos/id                     Update a video    
+/videos/id                     Update a video   
+/playlists/id/videos/id        Add a video to a playlist  
   
 ### DELETE
 
@@ -151,8 +151,11 @@ Important notes :
 
 ## Schema
 
-### Playlist
+view postman test 
 
-### Video
-
+##TO DO
+- add user/auth
+- add user/playlist relation
+- remove webservice abstract property and move get/getAll/insert/update/delete object method in with little update.
+- add sql delete cascade when delete video of playlist
 

@@ -225,7 +225,7 @@ switch ($method) {
                     $response['status'] = 400;
                     $response['data'] = array('error' => 'An error has occurred');
                 } else {
-                    $response['status'] = 201;
+                    $response['status'] = 200;
                     $response['data'] = $data;
                 }
             }
