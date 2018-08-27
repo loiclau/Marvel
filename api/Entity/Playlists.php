@@ -38,7 +38,36 @@ class Playlists extends Webservice
         return $data;
     }
 
+    public function getVideosFromPlaylists($id)
+    {
+        $sql = "SELECT v.* FROM " . $this->table . " p , video v , playlist_to_video pv WHERE " .
+            "p.id = pv.playlist_id AND pc.video_id = v.id AND p.id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(array($id));
+        $data = $stmt->fetch(\PDO::FETCH_OBJ);
+        return $data;
+    }
+
     public function insert(array $data)
+    {
+
+        $sql = "INSERT INTO " . $this->table . " SET `name` = :name, created=:created";
+        $stmt = $this->db->prepare($sql);
+
+        $stmt->bindParam(":name", $data['name']);
+        $stmt->bindParam(":created", date('Y-m-d H:i:s'));
+        $status = $stmt->execute();
+
+        $sql = "SELECT * FROM " . $this->table . " WHERE `name` = :name";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(":name", $data['name']);
+        $stmt->execute();
+        $data = $stmt->fetch(\PDO::FETCH_OBJ);
+
+        return array('status' => $status, 'data' => $data);
+    }
+
+    public function addVideosToPlaylist(array $data)
     {
 
         $sql = "INSERT INTO " . $this->table . " SET `name` = :name, created=:created";
@@ -95,4 +124,27 @@ class Playlists extends Webservice
         $status = $stmt->execute(array($id));
         return $status;
     }
+
+    public function deleteVideosFromPlaylist(array $data)
+    {
+
+        $sql = "DELETE " . $this->table . " SET `name` = :name, created=:created";
+        $stmt = $this->db->prepare($sql);
+
+        $stmt->bindParam(":name", $data['name']);
+        $stmt->bindParam(":created", date('Y-m-d H:i:s'));
+        $status = $stmt->execute();
+
+
+
+        return array('status' => $status, 'data' => $data);
+    }
+
+    private function orderPlaylist($idPlaylist, $orderVideo, $order)
+    {
+
+
+    }
+
+
 }

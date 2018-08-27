@@ -100,10 +100,23 @@ switch ($method) {
             $data = $object->getAll();
             $response['status'] = 200;
             $response['data'] = $data;
-        } else {
+        } elseif (!isset($urlArray[2])) {
             // METHOD : GET api/$object/:id
             $id = $urlArray[1];
             $data = $object->get($id);
+            if (empty($data)) {
+                $response['status'] = 404;
+                $response['data'] = array('error' => 'An error has occurred');
+            } else {
+                $response['status'] = 200;
+                $response['data'] = $data;
+            }
+        } else {
+            // METHOD : GET api/$object/:id/$object2
+            $object2 = $urlArray[2];
+            $id = $urlArray[1];
+            $newAction = 'get' . $object2 . 'from' . $action;
+            $data = $object->$newAction($id);
             if (empty($data)) {
                 $response['status'] = 404;
                 $response['data'] = array('error' => 'An error has occurred');
@@ -119,11 +132,25 @@ switch ($method) {
         $json = file_get_contents('php://input');
         $post = json_decode($json, true); // decode to array
         // check input completeness
-        if (empty($post)) {
-            $response['status'] = 400;
-            $response['data'] = array('error' => 'no data send');
+        if (!isset($urlArray[1])) {
+            if (empty($post)) {
+                $response['status'] = 400;
+                $response['data'] = array('error' => 'no data send');
+            } else {
+                $status = $object->insert($post);
+                if ($status['status'] == 1) {
+                    $response['status'] = 201;
+                    $response['data'] = $status['data'];
+                } else {
+                    $response['status'] = 400;
+                    $response['data'] = array('error' => 'An error has occurred');
+                }
+            }
         } else {
-            $status = $object->insert($post);
+            $object2 = $urlArray[2];
+            $id = $urlArray[1];
+            $newAction = 'add' . $object2 . 'to' . $action;
+            $status = $object->$newAction($post);
             if ($status['status'] == 1) {
                 $response['status'] = 201;
                 $response['data'] = $status['data'];
@@ -174,7 +201,7 @@ switch ($method) {
             if (empty($data)) {
                 $response['status'] = 404;
                 $response['data'] = array('error' => 'Object not found');
-            } else {
+            } elseif (!isset($urlArray[2])) {
                 $status = $object->delete($id);
                 if ($status == 1) {
                     $response['status'] = 200;
@@ -183,6 +210,19 @@ switch ($method) {
                     $response['status'] = 400;
                     $response['data'] = array('error' => 'An error has occurred');
                 }
+            } else {
+                $object2 = $urlArray[2];
+                $id2 = $urlArray[3];
+                $newAction = 'delete' . $object2 . 'from' . $action;
+                $status = $object->$newAction($id, $id2);
+                if ($status['status'] == 1) {
+                    $response['status'] = 201;
+                    $response['data'] = $status['data'];
+                } else {
+                    $response['status'] = 400;
+                    $response['data'] = array('error' => 'An error has occurred');
+                }
+
             }
         }
         break;
