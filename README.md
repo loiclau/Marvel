@@ -1,5 +1,5 @@
 
-##Introduction
+## Introduction
 
 Dailymotion is building a new feature "The playlist"
 The feature is simple : The user can create a list of ordered videos.
@@ -153,7 +153,7 @@ Important notes :
 
 view postman test 
 
-##TO DO
+## TO DO
 - add user/auth
 - add user/playlist relation
 - remove webservice abstract property and move get/getAll/insert/update/delete object method in with little update.
