@@ -200,11 +200,10 @@ switch ($method) {
             $id = $urlArray[1];
             // check if id exist in database
             $data = $object->get($id);
-
             if (empty($data)) {
                 $response['status'] = 404;
                 $response['data'] = array('error' => 'Object not found');
-            } elseif (!isset($urlArray[1])) {
+            } elseif (!isset($urlArray[2])) {
                 $status = $object->delete($id);
                 if ($status == 1) {
                     $response['status'] = 200;

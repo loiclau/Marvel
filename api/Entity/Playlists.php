@@ -6,14 +6,9 @@ class Playlists extends Webservice
 {
 
     // database connection and table name
-    private $db;
-    private $table = "playlist";
-
-    // object properties
-    public $id;
-    public $name;
-    public $order;
-    public $created;
+    const TABLE = "playlist";
+    const ORDER = "name";
+    protected $db;
 
     /**
      * Playlists constructor.
@@ -21,41 +16,28 @@ class Playlists extends Webservice
      */
     public function __construct($db)
     {
+        parent::__construct($db);
         $this->db = $db;
     }
 
     /**
+     * @param array $data
      * @return array
      */
-    public function getAll()
+    public function insert(array $data): array
     {
-        $sql = "SELECT * FROM " . $this->table . " ORDER BY `name` ASC";
-        $stmt = $this->db->query($sql);
-        $data = $stmt->fetchAll(\PDO::FETCH_OBJ);
-        return array("data" => $data);
+        $data['created'] = date('Y-m-d H:i:s');
+        $return = parent::insert($data);
+        return $return;
     }
 
     /**
      * @param $id
      * @return array
      */
-    public function get($id)
+    public function getVideosFromPlaylists(int $id): array
     {
-        $sql = "SELECT * FROM " . $this->table . " WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-        $data = $stmt->fetch(\PDO::FETCH_OBJ);
-        return array("data" => $data);
-    }
-
-    /**
-     * @param $id
-     * @return array
-     */
-    public function getVideosFromPlaylists($id)
-    {
-        $sql = "SELECT v.*, pv.order FROM " . $this->table . " p , video v , playlist_to_video pv WHERE " .
+        $sql = "SELECT v.*, pv.order FROM " . self::TABLE . " p , video v , playlist_to_video pv WHERE " .
             "p.id = pv.playlist_id AND pv.video_id = v.id AND p.id = :id ORDER BY pv.order";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(":id", $id);
@@ -68,28 +50,7 @@ class Playlists extends Webservice
      * @param array $data
      * @return array
      */
-    public function insert(array $data)
-    {
-        $sql = "INSERT INTO " . $this->table . " SET `name` = :name, created=:created";
-        $stmt = $this->db->prepare($sql);
-
-        $stmt->bindParam(":name", $data['name']);
-        $stmt->bindParam(":created", date('Y-m-d H:i:s'));
-        $stmt->execute();
-
-        $sql = "SELECT * FROM " . $this->table . " WHERE `name` = :name";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(":name", $data['name']);
-        $stmt->execute();
-        $data = $stmt->fetch(\PDO::FETCH_OBJ);
-        return array('data' => $data);
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     */
-    public function addVideosToPlaylists(array $data)
+    public function addVideosToPlaylists(array $data): array
     {
         $sql = "SELECT video_id, `order` FROM playlist_to_video WHERE playlist_id = :playlist_id " .
             "AND video_id != :video_id ORDER BY `order`";
@@ -117,14 +78,12 @@ class Playlists extends Webservice
         foreach ($newOrder AS $order => $video) {
             $sqlValue .= '(' . $data['playlist_id'] . ', ' . $video . ', ' . $order . '),';
         }
-
         $sqlValue = rtrim($sqlValue, ', ');
         $sql .= $sqlValue;
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
 
         $data = $this->getVideosFromPlaylists($data['playlist_id']);
-
         return $data;
     }
 
@@ -132,50 +91,7 @@ class Playlists extends Webservice
      * @param array $data
      * @return array
      */
-    public function update(array $data)
-    {
-        $queryData = '';
-        $queryValues = array();
-        $id = $data['id'];
-        unset($data['id']);
-
-        foreach ($data AS $key => $value) {
-            $queryData .= '`' . $key . '` = :' . $key . ', ';
-            $queryValues[$key] = $value;
-        }
-        $queryData = rtrim($queryData, ', ');
-
-        $sql = "UPDATE " . $this->table . " SET " . $queryData . " WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-
-        foreach ($queryValues AS $key => $value) {
-            $stmt->bindParam(":" . $key, $value);
-        }
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-
-        $data = $this->get($id);
-        return $data;
-    }
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function delete($id)
-    {
-        $sql = "DELETE FROM " . $this->table . " WHERE id=:id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(":id", $id);
-        $status = $stmt->execute();
-        return $status;
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     */
-    public function deleteVideosFromPlaylists(array $data)
+    public function deleteVideosFromPlaylists(array $data): array
     {
         $sql = "DELETE FROM playlist_to_video WHERE playlist_id = :playlist_id AND video_id = :video_id";
         $stmt = $this->db->prepare($sql);
@@ -187,7 +103,6 @@ class Playlists extends Webservice
         $data['order'] = 0;
 
         $data = $this->addVideosToPlaylists($data);
-
         return $data;
     }
 
@@ -197,7 +112,7 @@ class Playlists extends Webservice
      * @param $position
      * @return array
      */
-    private function orderPlaylist($tab, $insertValue, $position)
+    private function orderPlaylist($tab, $insertValue, $position): array
     {
         $newTab = array('0' => '');
         $insert = false;
