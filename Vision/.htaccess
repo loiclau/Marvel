@@ -1,6 +1,6 @@
 RewriteEngine On
-RewriteRule ^/api/.*$ /Raiponce/api/index.php
+RewriteRule ^/api/.*$ /Vision/api/index.php
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ /Raiponce/api/index.php [QSA,L]
+RewriteRule ^(.*)$ /Vision/api/index.php [QSA,L]
 
 

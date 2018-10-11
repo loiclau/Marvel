@@ -1,3 +1,13 @@
+> ```
+>  __                         __  ___    __       
+> |  \  /\  | |    \ /  |\/| /  \  |  | /  \ |\ | 
+> |__/ /~~\ | |___  |   |  | \__/  |  | \__/ | \| 
+>                                                                                          
+> ___  ___  __  ___                       
+>  |  |__  /__`  |                        
+>  |  |___ .__/  |                        
+>
+> ```                                       
 
 ## Introduction
 
@@ -152,10 +162,3 @@ Important notes :
 ## Schema
 
 view postman test 
-
-## TO DO
-- add user/auth
-- add user/playlist relation
-- remove webservice abstract property and move get/getAll/insert/update/delete object method in with little update.
-- add sql delete cascade when delete video of playlist
-

@@ -1,3 +1,14 @@
+> ```
+>         __          __  ___  __  
+> \  / | |  \  |\/| |  / |__  |__) 
+>  \/  | |__/  |  | | /_ |___ |  \ 
+>                                        
+> ___  ___  __  ___                       
+>  |  |__  /__`  |                        
+>  |  |___ .__/  |                        
+>                                                     
+> ```                                       
+
 # Problem Statement
 
 We are interested in triangles that have integer length sides, all of which are between

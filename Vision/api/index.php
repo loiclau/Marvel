@@ -74,7 +74,7 @@ $urlArray = explode('/', $_SERVER['REQUEST_URI']);
 
 array_shift($urlArray); // remove first value as it's empty
 // remove 2nd and 3rd array, because it's directory
-array_shift($urlArray); // 2nd = 'Raiponce'
+array_shift($urlArray); // 2nd = 'Vision'
 array_shift($urlArray); // 3rd = 'api'
 // get the action (resource, collection)
 $action = $urlArray[0];
